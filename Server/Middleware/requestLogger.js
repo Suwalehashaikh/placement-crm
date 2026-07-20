@@ -1,4 +1,4 @@
-import logger from "../Config/logger.js";
+import logger from "../config/logger.js";
 
 const requestLogger = (req, res, next) => {
   const start = Date.now();
