@@ -13,76 +13,89 @@ import jwt from "jsonwebtoken"
 
 // LOGIN CONTROLLER
 export const authController = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  // Validation
-  if (!email || !password) {
-    throw new customError(
-      400,
-      "Email and password are required"
-    );
-  }
-
-  // Check user
-  const user = await Employee.findOne({ email });
-
-  if (!user) {
-    throw new customError(
-      404,
-      "User not found"
-    );
-  }
-
-  // Verify password
-  const isMatched = await bcrypt.compare(
-    password,
-    user.password
-  );
-
-  if (!isMatched) {
-    throw new customError(
-      400,
-      "Invalid credentials"
-    );
-  }
-
-  // Generate OTP on EVERY login
-  const otp = Math.floor(
-    100000 + Math.random() * 900000
-  );
-
-  console.log("Generated OTP:", otp);
-
-  // Save OTP
-  user.otp = otp;
-
-  // Optional: keep user verified forever
-  user.isVerified = true;
-
-  await user.save();
-
-  // Email template
-  const content = otpTemplate.replace(
-    "{OTP}",
-    otp
-  );
-
-  // Send email
-  await sendEmail(
-    email,
-   "OTP Verification",
-   content
- );
-console.log("OTP:", otp);
-  return success(
-    res,
-    200,
-    "OTP has been successfully sent. Check your email.",
-    {
-      email: user.email,
+    // Validation
+    if (!email || !password) {
+      throw new customError(
+        400,
+        "Email and password are required"
+      );
     }
-  );
-}; 
+
+    // Check user
+    const user = await Employee.findOne({ email });
+
+    if (!user) {
+      throw new customError(
+        404,
+        "User not found"
+      );
+    }
+
+    // Verify password
+    const isMatched = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isMatched) {
+      throw new customError(
+        400,
+        "Invalid credentials"
+      );
+    }
+
+    // Generate OTP on EVERY login
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    );
+
+    console.log("Generated OTP:", otp);
+
+    // Save OTP
+    user.otp = otp;
+
+    // Optional: keep user verified forever
+    user.isVerified = true;
+
+    await user.save();
+
+    // Email template
+    const content = otpTemplate.replace(
+      "{OTP}",
+      otp
+    );
+
+    // Send email
+    await sendEmail(
+      email,
+      "OTP Verification",
+      content
+    );
+
+    console.log("OTP:", otp);
+
+    return success(
+      res,
+      200,
+      "OTP has been successfully sent. Check your email.",
+      {
+        email: user.email,
+      }
+    );
+
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+
+    return res.status(error.statusCode || 500).json({
+      status: "Fail",
+      message: error.message,
+      stack: error.stack, // remove in production
+    });
+  }
+};
 
 // VERIFY OTP CONTROLLER
 export const checkOtpController = async (
