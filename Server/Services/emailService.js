@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv"
 
 dotenv.config({path:"../.env"})
-
+/* 
 // Create a transporter using SMTP
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -12,8 +12,22 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.APP_PASS,
   },
+}); */
+const transporter = nodemailer.createTransport({
+  service: "gmail",   // 👈 host + port ki jagah ye use karo
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.APP_PASS,
+  },
 });
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("SMTP Error:", error);
+  } else {
+    console.log("SMTP Connected");
+  }
+});
 //wrap in an IIFE so we can use await
 
     export const sendEmail = async(recepient,subject,content)=>{

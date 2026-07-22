@@ -70,10 +70,10 @@ export const authController = async (req, res) => {
   // Send email
   await sendEmail(
     email,
-    "OTP Verification",
-    content
-  );
-
+   "OTP Verification",
+   content
+ );
+console.log("OTP:", otp);
   return success(
     res,
     200,
@@ -82,7 +82,8 @@ export const authController = async (req, res) => {
       email: user.email,
     }
   );
-};
+}; 
+
 // VERIFY OTP CONTROLLER
 export const checkOtpController = async (
   req,

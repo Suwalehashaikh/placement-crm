@@ -7,7 +7,10 @@
 } */
 
 
-    export const errorHandler = (err, req, res, next) => {
+   export const errorHandler = (err, req, res, next) => {
+  console.error("FULL ERROR:", err);
+  console.error("STACK:", err.stack);
+
   if (res.headersSent) {
     return next(err);
   }
@@ -16,5 +19,4 @@
     status: "Fail",
     message: err.message || "Internal Server Error",
   });
-  console.log("ERROR:", err);
 };

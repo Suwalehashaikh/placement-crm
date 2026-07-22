@@ -35,7 +35,7 @@ app.use(cookieParser())
 //cors config
 app.use(
   cors({
-    origin: [
+    origin: ["http://localhost:5173",
       "https://placement-crm-peach.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
